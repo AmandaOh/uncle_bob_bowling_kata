@@ -1,9 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by amanda on 11/04/2017.
- */
 public class Frame {
 
     private int score;

@@ -25,29 +25,38 @@ public class Game {
     }
 
     public void roll(int pins) {
-        if (currentFrame.size() == 2 && !(currentFrame instanceof TenthFrame)) {
-            moveToNextFrame();
-        }
-            accrualBonusPoints(pins);
-            currentFrame.setScore(pins);
-        if (pins == 10 && !(currentFrame instanceof TenthFrame)) {
+        currentFrame.setScore(pins);
+        accrualBonusPoints(pins);
+        if ((currentFrame.isStrike() || currentFrame.size() == 2) && !(currentFrame instanceof TenthFrame)) {
             moveToNextFrame();
         }
         rollNumber += 1;
     }
 
     private void accrualBonusPoints(int pins) {
-        if (previousFrame != null) {
-            if (previousFrame.isSpare()) {
-                previousFrame.setBonusScore(pins);
-            } else if (previousFrame.isStrike() && currentFrame.size() < 2) {
-                previousFrame.setBonusScore(pins);
+        if (currentFrame.size() == 1) {
+            if (twoFramesBefore != null) {
+                setPointsForTwoConsecutiveStrikes(pins);
+            }
+            if (previousFrame != null) {
+                setPointsForSpareOrStrikeInPreviousFrame(pins);
+            }
+        } else if (currentFrame.size() <= 2) {
+            if (previousFrame != null) {
+                setPointsForSpareOrStrikeInPreviousFrame(pins);
             }
         }
-        if (twoFramesBefore != null) {
-            if (twoFramesBefore.isStrike() && previousFrame.isStrike() && currentFrame.size() == 0) {
-                twoFramesBefore.setBonusScore(pins);
-            }
+    }
+
+    private void setPointsForSpareOrStrikeInPreviousFrame(int pins) {
+        if (previousFrame.isSpare() || (previousFrame.isStrike())) {
+            previousFrame.setBonusScore(pins);
+        }
+    }
+
+    private void setPointsForTwoConsecutiveStrikes(int pins) {
+        if (twoFramesBefore.isStrike() && previousFrame.isStrike()) {
+            twoFramesBefore.setBonusScore(pins);
         }
     }
 
